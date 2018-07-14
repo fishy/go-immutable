@@ -58,3 +58,21 @@ func ExampleMap() {
 	// 2: b
 	// 3: c
 }
+
+func ExampleSet() {
+	s := immutable.SetLiteral("a")
+	fmt.Printf("%%v: %v\n", s)
+	s = immutable.SetLiteral("a", "b", "c")
+	fmt.Printf("Len: %d\n", s.Len())
+	s.Range(func(x immutable.Hashable) error {
+		fmt.Printf("%v\n", x)
+		return nil
+	})
+	// Unordered Output:
+	//
+	// %v: [a]
+	// Len: 3
+	// a
+	// b
+	// c
+}

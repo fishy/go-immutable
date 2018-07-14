@@ -37,12 +37,12 @@ func TestMapBuilder(t *testing.T) {
 		t.Errorf("Get(%v) expected nil, got %v", key, value)
 	}
 
-	saw := make(map[immutable.Hashable]bool)
+	saw := immutable.NewSetBuilder()
 	if err := m.Range(func(key immutable.Hashable, value interface{}) error {
-		if saw[key] {
+		if saw.Contains(key) {
 			t.Errorf("Already iterated key %v", key)
 		}
-		saw[key] = true
+		saw.Add(key)
 		if value != orig[key] {
 			t.Errorf("Expected %v, %v, got %v, %v", key, orig[key], key, value)
 		}
@@ -50,7 +50,7 @@ func TestMapBuilder(t *testing.T) {
 	}); err != nil {
 		t.Errorf("Range() should return nil, got: %v", err)
 	}
-	size = len(saw)
+	size = saw.Len()
 	if size != 3 {
 		t.Errorf("Should iterated 3 key-value pairs, got %d", size)
 	}
