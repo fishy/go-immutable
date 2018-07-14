@@ -57,12 +57,6 @@ func TestListString(t *testing.T) {
 	}
 }
 
-var sizes = []int{
-	10,
-	1024,
-	1024 * 1024,
-}
-
 func BenchmarkListBuilder(b *testing.B) {
 	b.Run(
 		"literal-10",

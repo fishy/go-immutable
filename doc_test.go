@@ -34,3 +34,27 @@ func ExampleList() {
 	// 2: c
 	// %v: [a b c]
 }
+
+func ExampleMap() {
+	m := immutable.MapLiteral(immutable.MapLiteralType{
+		1: "a",
+	})
+	fmt.Printf("%%v: %v\n", m)
+	m = immutable.MapLiteral(immutable.MapLiteralType{
+		1: "a",
+		2: "b",
+		3: "c",
+	})
+	fmt.Printf("Len: %d\n", m.Len())
+	m.Range(func(k immutable.Hashable, v interface{}) error {
+		fmt.Printf("%v: %v\n", k, v)
+		return nil
+	})
+	// Unordered Output:
+	//
+	// %v: map[1:a]
+	// Len: 3
+	// 1: a
+	// 2: b
+	// 3: c
+}
