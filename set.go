@@ -10,7 +10,7 @@ var dummy = struct{}{}
 
 // SetRangeFunc defines the iteration function for Set type.
 //
-// Whenever SetRangeFunc returns a non-nill error, the iteration will be
+// Whenever SetRangeFunc returns a non-nil error, the iteration will be
 // stopped. The error will be returned by Range function.
 type SetRangeFunc func(x Hashable) error
 

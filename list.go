@@ -9,7 +9,7 @@ import (
 //
 // i will be the 0-based index and x will be the item.
 //
-// Whenever ListRangeFunc returns a non-nill error, the iteration will be
+// Whenever ListRangeFunc returns a non-nil error, the iteration will be
 // stopped. The error will be returned by Range function.
 type ListRangeFunc func(i int, x interface{}) error
 

@@ -10,7 +10,7 @@ type MapLiteralType map[Hashable]interface{}
 
 // MapRangeFunc defines the iteration function for Map type.
 //
-// Whenever MapRangeFunc returns a non-nill error, the iteration will be
+// Whenever MapRangeFunc returns a non-nil error, the iteration will be
 // stopped. The error will be returned by Range function.
 type MapRangeFunc func(key Hashable, value interface{}) error
 

@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-// ErrBreak can be used in Iter functions to stop the iteration early.
+// ErrBreak can be used in Range functions to stop the iteration early.
 var ErrBreak = errors.New("stop iteration")
 
 // Hashable defines the key type of Map and item type of Set.
