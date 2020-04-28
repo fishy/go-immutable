@@ -147,7 +147,6 @@ func BenchmarkMapBuilder(b *testing.B) {
 }
 
 func BenchmarkMapRange(b *testing.B) {
-	dummy := func(k immutable.Comparable, v interface{}) {}
 	for _, size := range sizes {
 		b.Run(
 			fmt.Sprintf("%d", size),
@@ -161,7 +160,8 @@ func BenchmarkMapRange(b *testing.B) {
 					func(b *testing.B) {
 						for i := 0; i < b.N; i++ {
 							for k, v := range orig {
-								dummy(k, v)
+								_ = k
+								_ = v
 							}
 						}
 					},
@@ -173,7 +173,6 @@ func BenchmarkMapRange(b *testing.B) {
 						b.ResetTimer()
 						for i := 0; i < b.N; i++ {
 							m.Range(func(k immutable.Comparable, v interface{}) error {
-								dummy(k, v)
 								return nil
 							})
 						}

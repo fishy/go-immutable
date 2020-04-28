@@ -112,7 +112,6 @@ func BenchmarkListBuilder(b *testing.B) {
 }
 
 func BenchmarkListRange(b *testing.B) {
-	dummy := func(i int, x interface{}) {}
 	for _, size := range sizes {
 		b.Run(
 			fmt.Sprintf("%d", size),
@@ -126,7 +125,8 @@ func BenchmarkListRange(b *testing.B) {
 					func(b *testing.B) {
 						for i := 0; i < b.N; i++ {
 							for i, x := range orig {
-								dummy(i, x)
+								_ = i
+								_ = x
 							}
 						}
 					},
@@ -138,7 +138,6 @@ func BenchmarkListRange(b *testing.B) {
 						b.ResetTimer()
 						for i := 0; i < b.N; i++ {
 							l.Range(func(i int, x interface{}) error {
-								dummy(i, x)
 								return nil
 							})
 						}
