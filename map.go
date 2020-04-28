@@ -31,7 +31,7 @@ type Map interface {
 
 // MapBuilder defines the interface of an immutable map builder.
 //
-// It's not guaranteed to be thread-safe and should not be used concurrently.
+// It's not guaranteed to be thread-safe and shouldn't be used concurrently.
 type MapBuilder interface {
 	Map
 

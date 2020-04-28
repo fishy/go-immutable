@@ -23,6 +23,7 @@ func ExampleList() {
 		return nil
 	})
 	fmt.Printf("%%v: %v\n", list)
+	fmt.Println("Reslice(1, 3):", list.Reslice(1, 3))
 	// Output:
 	//
 	// Len: 3
@@ -33,6 +34,7 @@ func ExampleList() {
 	// 1: b
 	// 2: c
 	// %v: [a b c]
+	// Reslice(1, 3): [b c]
 }
 
 func ExampleMap() {

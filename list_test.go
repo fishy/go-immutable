@@ -57,6 +57,17 @@ func TestListString(t *testing.T) {
 	}
 }
 
+func TestListReslice(t *testing.T) {
+	l := immutable.ListLiteral(0, 1, 2, 3, 4)
+	reslice := l.Reslice(1, 3)
+	if reslice.Len() != 2 {
+		t.Errorf("Expected reslice length of 2, got %v", reslice)
+	}
+	if reslice.Get(0) != 1 || reslice.Get(1) != 2 {
+		t.Errorf("Expected reslice of [1, 2], got %v", reslice)
+	}
+}
+
 func BenchmarkListBuilder(b *testing.B) {
 	b.Run(
 		"literal-10",

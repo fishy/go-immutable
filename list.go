@@ -17,10 +17,20 @@ type List interface {
 	// Len returns the length of the list.
 	Len() int
 
+	// Get returns the i-th item with 0-index.
+	//
+	// It panics when i is out of [0, Len()-1].
+	Get(i int) interface{}
+
 	// Range iterates through the list, in its original order.
 	//
 	// It will return the error returned by f.
 	Range(f ListRangeFunc) error
+
+	// Reslice returns the sublist from start to end-1 index.
+	//
+	// Use out of range indices will cause panic.
+	Reslice(start, end int) List
 }
 
 // ListBuilder defines the interface of an immutable list builder.
@@ -52,6 +62,10 @@ func (l *list) Len() int {
 	return len(l.list)
 }
 
+func (l *list) Get(i int) interface{} {
+	return l.list[i]
+}
+
 func (l *list) Range(f ListRangeFunc) error {
 	for i, x := range l.list {
 		if err := f(i, x); err != nil {
@@ -59,6 +73,10 @@ func (l *list) Range(f ListRangeFunc) error {
 		}
 	}
 	return nil
+}
+
+func (l *list) Reslice(start, end int) List {
+	return &list{list: l.list[start:end]}
 }
 
 func (l *list) Append(x ...interface{}) ListBuilder {

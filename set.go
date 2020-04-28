@@ -29,6 +29,8 @@ type Set interface {
 }
 
 // SetBuilder defines the interface of an immutable set builder.
+//
+// It's not guaranteed to be thread-safe and shouldn't be used concurrently.
 type SetBuilder interface {
 	Set
 
