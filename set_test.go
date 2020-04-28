@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fishy/go-immutable"
+	immutable "github.com/fishy/go-immutable"
 )
 
 func TestSetBuilder(t *testing.T) {
@@ -14,7 +14,7 @@ func TestSetBuilder(t *testing.T) {
 		t.Errorf("Len() expected 3, got %d", size)
 	}
 
-	var item immutable.Hashable = "b"
+	var item immutable.Comparable = "b"
 	var ok bool
 	ok = s.Contains(item)
 	if !ok {
@@ -27,7 +27,7 @@ func TestSetBuilder(t *testing.T) {
 	}
 
 	saw := immutable.NewSetBuilder()
-	if err := s.Range(func(x immutable.Hashable) error {
+	if err := s.Range(func(x immutable.Comparable) error {
 		if saw.Contains(x) {
 			t.Errorf("Already iterated %v", x)
 		}

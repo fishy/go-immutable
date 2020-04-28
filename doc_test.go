@@ -3,7 +3,7 @@ package immutable_test
 import (
 	"fmt"
 
-	"github.com/fishy/go-immutable"
+	immutable "github.com/fishy/go-immutable"
 )
 
 func ExampleList() {
@@ -46,7 +46,7 @@ func ExampleMap() {
 		3: "c",
 	})
 	fmt.Printf("Len: %d\n", m.Len())
-	m.Range(func(k immutable.Hashable, v interface{}) error {
+	m.Range(func(k immutable.Comparable, v interface{}) error {
 		fmt.Printf("%v: %v\n", k, v)
 		return nil
 	})
@@ -64,7 +64,7 @@ func ExampleSet() {
 	fmt.Printf("%%v: %v\n", s)
 	s = immutable.SetLiteral("a", "b", "c")
 	fmt.Printf("Len: %d\n", s.Len())
-	s.Range(func(x immutable.Hashable) error {
+	s.Range(func(x immutable.Comparable) error {
 		fmt.Printf("%v\n", x)
 		return nil
 	})

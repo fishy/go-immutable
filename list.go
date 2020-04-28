@@ -2,7 +2,6 @@ package immutable
 
 import (
 	"fmt"
-	"sync"
 )
 
 // ListRangeFunc defines the iteration function for List type.
@@ -17,6 +16,7 @@ type ListRangeFunc func(i int, x interface{}) error
 type List interface {
 	// Len returns the length of the list.
 	Len() int
+
 	// Range iterates through the list, in its original order.
 	//
 	// It will return the error returned by f.
@@ -24,23 +24,22 @@ type List interface {
 }
 
 // ListBuilder defines the interface of an immutable list builder.
+//
+// It's not guaranteed to be thread-safe and shouldn't be used concurrently.
 type ListBuilder interface {
 	List
+
 	// Append appends item(s) to the list.
 	//
 	// It should return self for chaining.
 	Append(x ...interface{}) ListBuilder
+
 	// Build builds the immutable list.
 	Build() List
 }
 
 type list struct {
 	list []interface{}
-
-	// needLock should be true if it's used as builder, and false if it's used as
-	// immutable list.
-	needLock bool
-	lock     sync.RWMutex
 }
 
 // Make sure *list satisfies List and ListBuilder interfaces.
@@ -50,18 +49,10 @@ var (
 )
 
 func (l *list) Len() int {
-	if l.needLock {
-		l.lock.RLock()
-		defer l.lock.RUnlock()
-	}
 	return len(l.list)
 }
 
 func (l *list) Range(f ListRangeFunc) error {
-	if l.needLock {
-		l.lock.RLock()
-		defer l.lock.RUnlock()
-	}
 	for i, x := range l.list {
 		if err := f(i, x); err != nil {
 			return err
@@ -71,36 +62,25 @@ func (l *list) Range(f ListRangeFunc) error {
 }
 
 func (l *list) Append(x ...interface{}) ListBuilder {
-	l.lock.Lock()
-	defer l.lock.Unlock()
 	l.list = append(l.list, x...)
 	return l
 }
 
 func (l *list) Build() List {
-	l.lock.RLock()
-	defer l.lock.RUnlock()
 	newlist := make([]interface{}, len(l.list))
 	copy(newlist, l.list)
 	return &list{
-		list:     newlist,
-		needLock: false,
+		list: newlist,
 	}
 }
 
 func (l *list) String() string {
-	if l.needLock {
-		l.lock.RLock()
-		defer l.lock.RUnlock()
-	}
 	return fmt.Sprintf("%v", l.list)
 }
 
 // NewListBuilder creates a ListBuilder.
 func NewListBuilder() ListBuilder {
-	return &list{
-		needLock: true,
-	}
+	return &list{}
 }
 
 // ListLiteral creates an immutable list from items.

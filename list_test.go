@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/fishy/go-immutable"
+	immutable "github.com/fishy/go-immutable"
 )
 
 func TestListBuilder(t *testing.T) {

@@ -19,7 +19,7 @@ func TestMapBuilder(t *testing.T) {
 		t.Errorf("Len() expected 3, got %d", size)
 	}
 
-	var key immutable.Hashable = 2
+	var key immutable.Comparable = 2
 	var target interface{} = "b"
 	value, ok := m.Get(key)
 	if !ok {
@@ -38,7 +38,7 @@ func TestMapBuilder(t *testing.T) {
 	}
 
 	saw := immutable.NewSetBuilder()
-	if err := m.Range(func(key immutable.Hashable, value interface{}) error {
+	if err := m.Range(func(key immutable.Comparable, value interface{}) error {
 		if saw.Contains(key) {
 			t.Errorf("Already iterated key %v", key)
 		}
@@ -170,7 +170,7 @@ func BenchmarkMapRange(b *testing.B) {
 						m := immutable.MapLiteral(orig)
 						b.ResetTimer()
 						for i := 0; i < b.N; i++ {
-							m.Range(func(k immutable.Hashable, v interface{}) error {
+							m.Range(func(k immutable.Comparable, v interface{}) error {
 								return nil
 							})
 						}

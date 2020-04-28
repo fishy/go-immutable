@@ -2,26 +2,27 @@ package immutable
 
 import (
 	"fmt"
-	"sync"
 )
 
 // MapLiteralType is the shorthand type to be used in MapLiteral.
-type MapLiteralType map[Hashable]interface{}
+type MapLiteralType map[Comparable]interface{}
 
 // MapRangeFunc defines the iteration function for Map type.
 //
 // Whenever MapRangeFunc returns a non-nil error, the iteration will be
 // stopped. The error will be returned by Range function.
-type MapRangeFunc func(key Hashable, value interface{}) error
+type MapRangeFunc func(key Comparable, value interface{}) error
 
 // Map defines the interface of an immutable map.
 type Map interface {
 	// Len returns the size of the map.
 	Len() int
+
 	// Get returns the value to the key.
 	//
 	// If the key is not in the map, value will be nil and ok will be false.
-	Get(key Hashable) (value interface{}, ok bool)
+	Get(key Comparable) (value interface{}, ok bool)
+
 	// Range iterates through the map.
 	//
 	// It will return the error returned by f.
@@ -29,16 +30,21 @@ type Map interface {
 }
 
 // MapBuilder defines the interface of an immutable map builder.
+//
+// It's not guaranteed to be thread-safe and should not be used concurrently.
 type MapBuilder interface {
 	Map
+
 	// Set sets the key value pair to the map.
 	//
 	// It should return self for chaining.
-	Set(key Hashable, value interface{}) MapBuilder
+	Set(key Comparable, value interface{}) MapBuilder
+
 	// Update updates every key value pair from m to the map.
 	//
 	// It should return self for chaining.
 	Update(m MapLiteralType) MapBuilder
+
 	// Build builds the immutable map.
 	Build() Map
 }
@@ -54,18 +60,19 @@ func (m *immutableMap) Len() int {
 	return len(m.m)
 }
 
-func (m *immutableMap) Get(key Hashable) (value interface{}, ok bool) {
-	v, ok := m.m[key]
-	return v, ok
+func (m *immutableMap) Get(key Comparable) (value interface{}, ok bool) {
+	value, ok = m.m[key]
+	return
 }
 
-func (m *immutableMap) Range(f MapRangeFunc) error {
+func (m *immutableMap) Range(f MapRangeFunc) (err error) {
 	for k, v := range m.m {
-		if err := f(k, v); err != nil {
-			return err
+		err = f(k, v)
+		if err != nil {
+			return
 		}
 	}
-	return nil
+	return
 }
 
 func (m *immutableMap) String() string {
@@ -76,59 +83,38 @@ func (m *immutableMap) String() string {
 var _ MapBuilder = (*mapBuilder)(nil)
 
 type mapBuilder struct {
-	m sync.Map
+	immutableMap
 }
 
-func (m *mapBuilder) Len() int {
-	n := 0
-	m.m.Range(func(k, v interface{}) bool {
-		n++
-		return true
-	})
-	return n
+func (mb *mapBuilder) Set(key Comparable, value interface{}) MapBuilder {
+	mb.immutableMap.m[key] = value
+	return mb
 }
 
-func (m *mapBuilder) Get(key Hashable) (value interface{}, ok bool) {
-	return m.m.Load(key)
-}
-
-func (m *mapBuilder) Range(f MapRangeFunc) (retErr error) {
-	m.m.Range(func(k, v interface{}) bool {
-		if err := f(Hashable(k), v); err != nil {
-			retErr = err
-			return false
-		}
-		return true
-	})
-	return
-}
-
-func (m *mapBuilder) Set(key Hashable, value interface{}) MapBuilder {
-	m.m.Store(key, value)
-	return m
-}
-
-func (m *mapBuilder) Update(incoming MapLiteralType) MapBuilder {
+func (mb *mapBuilder) Update(incoming MapLiteralType) MapBuilder {
 	for k, v := range incoming {
-		m.Set(k, v)
+		mb.Set(k, v)
 	}
-	return m
+	return mb
 }
 
-func (m *mapBuilder) Build() Map {
-	newMap := make(MapLiteralType)
-	m.m.Range(func(k, v interface{}) bool {
-		newMap[k] = v
-		return true
-	})
+func (mb *mapBuilder) Build() Map {
+	m := make(MapLiteralType)
+	for k, v := range mb.immutableMap.m {
+		m[k] = v
+	}
 	return &immutableMap{
-		m: newMap,
+		m: m,
 	}
 }
 
 // NewMapBuilder creates a new MapBuilder.
 func NewMapBuilder() MapBuilder {
-	return &mapBuilder{}
+	return &mapBuilder{
+		immutableMap: immutableMap{
+			m: make(MapLiteralType),
+		},
+	}
 }
 
 // MapLiteral creates an immutable map from existing map.
