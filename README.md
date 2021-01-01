@@ -1,3 +1,6 @@
+[![PkgGoDev](https://pkg.go.dev/badge/go.yhsif.com/immutable)](https://pkg.go.dev/go.yhsif.com/immutable)
+[![Go Report Card](https://goreportcard.com/badge/go.yhsif.com/immutable)](https://goreportcard.com/report/go.yhsif.com/immutable)
+
 # go-immutable
 
 Immutable map/set/list for go.
@@ -47,3 +50,7 @@ BenchmarkMapRange/131072/immutable-4                         578           20674
 PASS
 ok      go.yhsif.com/immutable  42.700s
 ```
+
+## License
+
+[BSD License](LICENSE).
