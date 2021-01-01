@@ -6,4 +6,4 @@
 // you are guaranteed that you always get the same pointer with the same index,
 // but the content pointer points to might be changed by others shared the same
 // immutable list.
-package immutable
+package immutable // import "go.yhsif.com/immutable"

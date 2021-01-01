@@ -3,7 +3,7 @@ package immutable_test
 import (
 	"fmt"
 
-	immutable "github.com/fishy/go-immutable"
+	"go.yhsif.com/immutable"
 )
 
 type ImmutableIntStringMap struct {

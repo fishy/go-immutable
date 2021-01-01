@@ -1,3 +1,3 @@
-module github.com/fishy/go-immutable
+module go.yhsif.com/immutable
 
-go 1.14
+go 1.15

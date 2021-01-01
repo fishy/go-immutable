@@ -11,4 +11,4 @@ var ErrBreak = errors.New("stop iteration")
 //
 // It must support go's comparison operators, as defined in:
 // https://golang.org/ref/spec#Comparison_operators
-type Comparable interface{}
+type Comparable = interface{}

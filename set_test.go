@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	immutable "github.com/fishy/go-immutable"
+	"go.yhsif.com/immutable"
 )
 
 func TestSetBuilder(t *testing.T) {
