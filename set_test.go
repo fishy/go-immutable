@@ -56,3 +56,18 @@ func TestSetString(t *testing.T) {
 		)
 	}
 }
+
+func TestEmptySet(t *testing.T) {
+	if l := immutable.EmptySet.Len(); l != 0 {
+		t.Errorf("EmptySet.Len() expected 0, got %d", l)
+	}
+	if ok := immutable.EmptySet.Contains("foo"); ok {
+		t.Error("EmptySet.Contains() expected false, got true")
+	}
+	if err := immutable.EmptySet.Range(func(x immutable.Comparable) error {
+		t.Errorf("EmptySet.Range called SetRangeFunc with %v", x)
+		return nil
+	}); err != nil {
+		t.Errorf("EmptySet.Range() returned error: %v", err)
+	}
+}

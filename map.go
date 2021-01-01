@@ -49,23 +49,35 @@ type MapBuilder interface {
 	Build() Map
 }
 
-// Make sure *immutableMap satisfies Map interface.
-var _ Map = (*immutableMap)(nil)
+// EmptyMap defines an immutable empty map.
+var EmptyMap Map = (*immutableMap)(nil)
 
 type immutableMap struct {
 	m MapLiteralType
 }
 
 func (m *immutableMap) Len() int {
+	if m == nil {
+		return 0
+	}
+
 	return len(m.m)
 }
 
 func (m *immutableMap) Get(key Comparable) (value interface{}, ok bool) {
+	if m == nil {
+		return
+	}
+
 	value, ok = m.m[key]
 	return
 }
 
 func (m *immutableMap) Range(f MapRangeFunc) (err error) {
+	if m == nil {
+		return
+	}
+
 	for k, v := range m.m {
 		err = f(k, v)
 		if err != nil {

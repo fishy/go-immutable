@@ -68,6 +68,21 @@ func TestMapString(t *testing.T) {
 	}
 }
 
+func TestEmptyMap(t *testing.T) {
+	if l := immutable.EmptyMap.Len(); l != 0 {
+		t.Errorf("EmptyMap.Len() expected 0, got %d", l)
+	}
+	if value, ok := immutable.EmptyMap.Get("foo"); value != nil || ok {
+		t.Errorf("EmptyMap.Get() expected nil, false, got %v, %v", value, ok)
+	}
+	if err := immutable.EmptyMap.Range(func(k immutable.Comparable, v interface{}) error {
+		t.Errorf("EmptyMap.Range called MapRangeFunc with %v, %v", k, v)
+		return nil
+	}); err != nil {
+		t.Errorf("EmptyMap.Range() returned error: %v", err)
+	}
+}
+
 func BenchmarkMapBuilder(b *testing.B) {
 	b.Run(
 		"literal-5",

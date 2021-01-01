@@ -68,6 +68,18 @@ func TestListReslice(t *testing.T) {
 	}
 }
 
+func TestEmptyList(t *testing.T) {
+	if l := immutable.EmptyList.Len(); l != 0 {
+		t.Errorf("EmptyList.Len() expected 0, got %d", l)
+	}
+	if err := immutable.EmptyList.Range(func(i int, x interface{}) error {
+		t.Errorf("EmptyList.Range called ListRangeFunc with %d, %v", i, x)
+		return nil
+	}); err != nil {
+		t.Errorf("EmptyList.Range() returned error: %v", err)
+	}
+}
+
 func BenchmarkListBuilder(b *testing.B) {
 	b.Run(
 		"literal-10",

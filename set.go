@@ -43,23 +43,35 @@ type SetBuilder interface {
 	Build() Set
 }
 
-// Make sure *set satisfies Set interface
-var _ Set = (*set)(nil)
+// EmptySet defines an immutable empty set.
+var EmptySet Set = (*set)(nil)
 
 type set struct {
 	m Map
 }
 
 func (s *set) Len() int {
+	if s == nil {
+		return 0
+	}
+
 	return s.m.Len()
 }
 
 func (s *set) Contains(x Comparable) bool {
+	if s == nil {
+		return false
+	}
+
 	_, ok := s.m.Get(x)
 	return ok
 }
 
 func (s *set) Range(f SetRangeFunc) error {
+	if s == nil {
+		return nil
+	}
+
 	return s.m.Range(func(k Comparable, _ interface{}) error {
 		return f(k)
 	})

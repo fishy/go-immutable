@@ -48,17 +48,21 @@ type ListBuilder interface {
 	Build() List
 }
 
+// EmptyList defines an immutable empty list.
+var EmptyList List = (*list)(nil)
+
 type list struct {
 	list []interface{}
 }
 
-// Make sure *list satisfies List and ListBuilder interfaces.
-var (
-	_ List        = (*list)(nil)
-	_ ListBuilder = (*list)(nil)
-)
+// Make sure *list satisfies ListBuilder interface.
+var _ ListBuilder = (*list)(nil)
 
 func (l *list) Len() int {
+	if l == nil {
+		return 0
+	}
+
 	return len(l.list)
 }
 
@@ -67,6 +71,10 @@ func (l *list) Get(i int) interface{} {
 }
 
 func (l *list) Range(f ListRangeFunc) error {
+	if l == nil {
+		return nil
+	}
+
 	for i, x := range l.list {
 		if err := f(i, x); err != nil {
 			return err
