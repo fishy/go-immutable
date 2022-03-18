@@ -4,59 +4,58 @@ import (
 	"fmt"
 )
 
-// MapLiteralType is the shorthand type to be used in MapLiteral.
-type MapLiteralType map[Comparable]interface{}
-
 // MapRangeFunc defines the iteration function for Map type.
 //
 // Whenever MapRangeFunc returns a non-nil error, the iteration will be
 // stopped. The error will be returned by Range function.
-type MapRangeFunc func(key Comparable, value interface{}) error
+type MapRangeFunc[K comparable, V any] func(key K, value V) error
 
 // Map defines the interface of an immutable map.
-type Map interface {
+type Map[K comparable, V any] interface {
 	// Len returns the size of the map.
 	Len() int
 
 	// Get returns the value to the key.
 	//
-	// If the key is not in the map, value will be nil and ok will be false.
-	Get(key Comparable) (value interface{}, ok bool)
+	// If the key is not in the map, value will be zero and ok will be false.
+	Get(key K) (value V, ok bool)
 
 	// Range iterates through the map.
 	//
 	// It will return the error returned by f.
-	Range(f MapRangeFunc) error
+	Range(f MapRangeFunc[K, V]) error
 }
 
 // MapBuilder defines the interface of an immutable map builder.
 //
 // It's not guaranteed to be thread-safe and shouldn't be used concurrently.
-type MapBuilder interface {
-	Map
+type MapBuilder[K comparable, V any] interface {
+	Map[K, V]
 
 	// Set sets the key value pair to the map.
 	//
-	// It should return self for chaining.
-	Set(key Comparable, value interface{}) MapBuilder
+	// It returns self for chaining.
+	Set(key K, value V) MapBuilder[K, V]
 
 	// Update updates every key value pair from m to the map.
 	//
-	// It should return self for chaining.
-	Update(m MapLiteralType) MapBuilder
+	// It returns self for chaining.
+	Update(m map[K]V) MapBuilder[K, V]
 
 	// Build builds the immutable map.
-	Build() Map
+	Build() Map[K, V]
 }
 
-// EmptyMap defines an immutable empty map.
-var EmptyMap Map = (*immutableMap)(nil)
-
-type immutableMap struct {
-	m MapLiteralType
+// EmptyMap returns an immutable empty map.
+func EmptyMap[K comparable, V any]() Map[K, V] {
+	return (*immutableMap[K, V])(nil)
 }
 
-func (m *immutableMap) Len() int {
+type immutableMap[K comparable, V any] struct {
+	m map[K]V
+}
+
+func (m *immutableMap[K, V]) Len() int {
 	if m == nil {
 		return 0
 	}
@@ -64,7 +63,7 @@ func (m *immutableMap) Len() int {
 	return len(m.m)
 }
 
-func (m *immutableMap) Get(key Comparable) (value interface{}, ok bool) {
+func (m *immutableMap[K, V]) Get(key K) (value V, ok bool) {
 	if m == nil {
 		return
 	}
@@ -73,7 +72,7 @@ func (m *immutableMap) Get(key Comparable) (value interface{}, ok bool) {
 	return
 }
 
-func (m *immutableMap) Range(f MapRangeFunc) (err error) {
+func (m *immutableMap[K, V]) Range(f MapRangeFunc[K, V]) (err error) {
 	if m == nil {
 		return
 	}
@@ -87,51 +86,51 @@ func (m *immutableMap) Range(f MapRangeFunc) (err error) {
 	return
 }
 
-func (m *immutableMap) String() string {
+func (m *immutableMap[K, V]) String() string {
 	return fmt.Sprintf("%v", m.m)
 }
 
 // Make sure *mapBuilder satisfies MapBuilder interface.
-var _ MapBuilder = (*mapBuilder)(nil)
+var _ MapBuilder[int, any] = (*mapBuilder[int, any])(nil)
 
-type mapBuilder struct {
-	immutableMap
+type mapBuilder[K comparable, V any] struct {
+	immutableMap[K, V]
 }
 
-func (mb *mapBuilder) Set(key Comparable, value interface{}) MapBuilder {
+func (mb *mapBuilder[K, V]) Set(key K, value V) MapBuilder[K, V] {
 	mb.immutableMap.m[key] = value
 	return mb
 }
 
-func (mb *mapBuilder) Update(incoming MapLiteralType) MapBuilder {
+func (mb *mapBuilder[K, V]) Update(incoming map[K]V) MapBuilder[K, V] {
 	for k, v := range incoming {
 		mb.Set(k, v)
 	}
 	return mb
 }
 
-func (mb *mapBuilder) Build() Map {
-	m := make(MapLiteralType)
+func (mb *mapBuilder[K, V]) Build() Map[K, V] {
+	m := make(map[K]V)
 	for k, v := range mb.immutableMap.m {
 		m[k] = v
 	}
-	return &immutableMap{
+	return &immutableMap[K, V]{
 		m: m,
 	}
 }
 
 // NewMapBuilder creates a new MapBuilder.
-func NewMapBuilder() MapBuilder {
-	return &mapBuilder{
-		immutableMap: immutableMap{
-			m: make(MapLiteralType),
+func NewMapBuilder[K comparable, V any]() MapBuilder[K, V] {
+	return &mapBuilder[K, V]{
+		immutableMap: immutableMap[K, V]{
+			m: make(map[K]V),
 		},
 	}
 }
 
 // MapLiteral creates an immutable map from existing map.
 //
-// It's shorthand for immutable.NewMapBuilder().Update(m).Build().
-func MapLiteral(m MapLiteralType) Map {
-	return NewMapBuilder().Update(m).Build()
+// It's shorthand for immutable.NewMapBuilder[K, V]().Update(m).Build().
+func MapLiteral[K comparable, V any](m map[K]V) Map[K, V] {
+	return NewMapBuilder[K, V]().Update(m).Build()
 }

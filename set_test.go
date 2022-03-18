@@ -14,7 +14,7 @@ func TestSetBuilder(t *testing.T) {
 		t.Errorf("Len() expected 3, got %d", size)
 	}
 
-	var item immutable.Comparable = "b"
+	item := "b"
 	var ok bool
 	ok = s.Contains(item)
 	if !ok {
@@ -26,8 +26,8 @@ func TestSetBuilder(t *testing.T) {
 		t.Errorf("%v should not be in the set", item)
 	}
 
-	saw := immutable.NewSetBuilder()
-	if err := s.Range(func(x immutable.Comparable) error {
+	saw := immutable.NewSetBuilder[string]()
+	if err := s.Range(func(x string) error {
 		if saw.Contains(x) {
 			t.Errorf("Already iterated %v", x)
 		}
@@ -58,13 +58,13 @@ func TestSetString(t *testing.T) {
 }
 
 func TestEmptySet(t *testing.T) {
-	if l := immutable.EmptySet.Len(); l != 0 {
+	if l := immutable.EmptySet[string]().Len(); l != 0 {
 		t.Errorf("EmptySet.Len() expected 0, got %d", l)
 	}
-	if ok := immutable.EmptySet.Contains("foo"); ok {
+	if ok := immutable.EmptySet[string]().Contains("foo"); ok {
 		t.Error("EmptySet.Contains() expected false, got true")
 	}
-	if err := immutable.EmptySet.Range(func(x immutable.Comparable) error {
+	if err := immutable.EmptySet[string]().Range(func(x string) error {
 		t.Errorf("EmptySet.Range called SetRangeFunc with %v", x)
 		return nil
 	}); err != nil {

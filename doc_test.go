@@ -10,7 +10,7 @@ func ExampleList() {
 	list := immutable.ListLiteral("a", "b", "c")
 	fmt.Printf("Len: %d\n", list.Len())
 	fmt.Println("Break iteration:")
-	list.Range(func(i int, x interface{}) error {
+	list.Range(func(i int, x string) error {
 		if i >= 1 {
 			return immutable.ErrBreak
 		}
@@ -18,7 +18,7 @@ func ExampleList() {
 		return nil
 	})
 	fmt.Println("Full iteration:")
-	list.Range(func(i int, x interface{}) error {
+	list.Range(func(i int, x string) error {
 		fmt.Printf("%d: %v\n", i, x)
 		return nil
 	})
@@ -38,17 +38,17 @@ func ExampleList() {
 }
 
 func ExampleMap() {
-	m := immutable.MapLiteral(immutable.MapLiteralType{
+	m := immutable.MapLiteral(map[int]string{
 		1: "a",
 	})
 	fmt.Printf("%%v: %v\n", m)
-	m = immutable.MapLiteral(immutable.MapLiteralType{
+	m = immutable.MapLiteral(map[int]string{
 		1: "a",
 		2: "b",
 		3: "c",
 	})
 	fmt.Printf("Len: %d\n", m.Len())
-	m.Range(func(k immutable.Comparable, v interface{}) error {
+	m.Range(func(k int, v string) error {
 		fmt.Printf("%v: %v\n", k, v)
 		return nil
 	})
@@ -66,7 +66,7 @@ func ExampleSet() {
 	fmt.Printf("%%v: %v\n", s)
 	s = immutable.SetLiteral("a", "b", "c")
 	fmt.Printf("Len: %d\n", s.Len())
-	s.Range(func(x immutable.Comparable) error {
+	s.Range(func(x string) error {
 		fmt.Printf("%v\n", x)
 		return nil
 	})
@@ -77,4 +77,18 @@ func ExampleSet() {
 	// a
 	// b
 	// c
+}
+
+func ExampleDropOK() {
+	m := immutable.MapLiteral(map[int]string{
+		1: "a",
+	})
+	fmt.Printf("whole map: %v\n", m)
+	fmt.Printf("1: %q\n", immutable.DropOK(m.Get(1))) // "a"
+	fmt.Printf("2: %q\n", immutable.DropOK(m.Get(2))) // "" as this is not in the map
+	// Output:
+	//
+	// whole map: map[1:a]
+	// 1: "a"
+	// 2: ""
 }

@@ -10,55 +10,57 @@ import (
 //
 // Whenever ListRangeFunc returns a non-nil error, the iteration will be
 // stopped. The error will be returned by Range function.
-type ListRangeFunc func(i int, x interface{}) error
+type ListRangeFunc[T any] func(i int, x T) error
 
 // List defines the interface of an immutable list.
-type List interface {
+type List[T any] interface {
 	// Len returns the length of the list.
 	Len() int
 
 	// Get returns the i-th item with 0-index.
 	//
 	// It panics when i is out of [0, Len()-1].
-	Get(i int) interface{}
+	Get(i int) T
 
 	// Range iterates through the list, in its original order.
 	//
 	// It will return the error returned by f.
-	Range(f ListRangeFunc) error
+	Range(f ListRangeFunc[T]) error
 
 	// Reslice returns the sublist from start to end-1 index.
 	//
 	// Use out of range indices will cause panic.
-	Reslice(start, end int) List
+	Reslice(start, end int) List[T]
 }
 
 // ListBuilder defines the interface of an immutable list builder.
 //
 // It's not guaranteed to be thread-safe and shouldn't be used concurrently.
-type ListBuilder interface {
-	List
+type ListBuilder[T any] interface {
+	List[T]
 
 	// Append appends item(s) to the list.
 	//
-	// It should return self for chaining.
-	Append(x ...interface{}) ListBuilder
+	// It returns self for chaining.
+	Append(x ...T) ListBuilder[T]
 
 	// Build builds the immutable list.
-	Build() List
+	Build() List[T]
 }
 
-// EmptyList defines an immutable empty list.
-var EmptyList List = (*list)(nil)
+// EmptyList returns an immutable empty list.
+func EmptyList[T any]() List[T] {
+	return (*list[T])(nil)
+}
 
-type list struct {
-	list []interface{}
+type list[T any] struct {
+	list []T
 }
 
 // Make sure *list satisfies ListBuilder interface.
-var _ ListBuilder = (*list)(nil)
+var _ ListBuilder[any] = (*list[any])(nil)
 
-func (l *list) Len() int {
+func (l *list[T]) Len() int {
 	if l == nil {
 		return 0
 	}
@@ -66,11 +68,11 @@ func (l *list) Len() int {
 	return len(l.list)
 }
 
-func (l *list) Get(i int) interface{} {
+func (l *list[T]) Get(i int) T {
 	return l.list[i]
 }
 
-func (l *list) Range(f ListRangeFunc) error {
+func (l *list[T]) Range(f ListRangeFunc[T]) error {
 	if l == nil {
 		return nil
 	}
@@ -83,35 +85,35 @@ func (l *list) Range(f ListRangeFunc) error {
 	return nil
 }
 
-func (l *list) Reslice(start, end int) List {
-	return &list{list: l.list[start:end]}
+func (l *list[T]) Reslice(start, end int) List[T] {
+	return &list[T]{list: l.list[start:end]}
 }
 
-func (l *list) Append(x ...interface{}) ListBuilder {
+func (l *list[T]) Append(x ...T) ListBuilder[T] {
 	l.list = append(l.list, x...)
 	return l
 }
 
-func (l *list) Build() List {
-	newlist := make([]interface{}, len(l.list))
+func (l *list[T]) Build() List[T] {
+	newlist := make([]T, len(l.list))
 	copy(newlist, l.list)
-	return &list{
+	return &list[T]{
 		list: newlist,
 	}
 }
 
-func (l *list) String() string {
+func (l *list[T]) String() string {
 	return fmt.Sprintf("%v", l.list)
 }
 
 // NewListBuilder creates a ListBuilder.
-func NewListBuilder() ListBuilder {
-	return &list{}
+func NewListBuilder[T any]() ListBuilder[T] {
+	return &list[T]{}
 }
 
 // ListLiteral creates an immutable list from items.
 //
-// It's shorthand for immutable.NewListBuilder().Append(items...).Build().
-func ListLiteral(items ...interface{}) List {
-	return NewListBuilder().Append(items...).Build()
+// It's shorthand for immutable.NewListBuilder[T]().Append(items...).Build().
+func ListLiteral[T any](items ...T) List[T] {
+	return NewListBuilder[T]().Append(items...).Build()
 }
