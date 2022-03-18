@@ -65,7 +65,7 @@ func (s *set[T]) Contains(x T) bool {
 		return false
 	}
 
-	_, ok := s.m.Get(x)
+	_, ok := s.m.Load(x)
 	return ok
 }
 
@@ -108,7 +108,7 @@ func (s *setBuilder[T]) Len() int {
 }
 
 func (s *setBuilder[T]) Contains(x T) bool {
-	_, ok := s.m.Get(x)
+	_, ok := s.m.Load(x)
 	return ok
 }
 

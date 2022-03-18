@@ -21,20 +21,20 @@ func TestMapBuilder(t *testing.T) {
 
 	key := 2
 	const target = "b"
-	value, ok := m.Get(key)
+	value, ok := m.Load(key)
 	if !ok {
 		t.Errorf("%v should be in the map", key)
 	}
 	if value != target {
-		t.Errorf("Get(%v) expected %v, got %v", key, target, value)
+		t.Errorf("Load(%v) expected %v, got %v", key, target, value)
 	}
 	key = 0
-	value, ok = m.Get(key)
+	value, ok = m.Load(key)
 	if ok {
 		t.Errorf("%v should not be in the map", key)
 	}
 	if value != "" {
-		t.Errorf("Get(%v) expected empty string, got %q", key, value)
+		t.Errorf("Load(%v) expected empty string, got %q", key, value)
 	}
 
 	saw := immutable.NewSetBuilder[int]()
@@ -72,8 +72,8 @@ func TestEmptyMap(t *testing.T) {
 	if l := immutable.EmptyMap[string, any]().Len(); l != 0 {
 		t.Errorf("EmptyMap.Len() expected 0, got %d", l)
 	}
-	if value, ok := immutable.EmptyMap[string, any]().Get("foo"); value != nil || ok {
-		t.Errorf("EmptyMap.Get() expected nil, false, got %v, %v", value, ok)
+	if value, ok := immutable.EmptyMap[string, any]().Load("foo"); value != nil || ok {
+		t.Errorf("EmptyMap.Load() expected nil, false, got %v, %v", value, ok)
 	}
 	if err := immutable.EmptyMap[string, any]().Range(func(k string, v any) error {
 		t.Errorf("EmptyMap.Range called MapRangeFunc with %v, %v", k, v)

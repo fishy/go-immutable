@@ -15,10 +15,15 @@ type Map[K comparable, V any] interface {
 	// Len returns the size of the map.
 	Len() int
 
-	// Get returns the value to the key.
+	// Load returns the value to the key.
 	//
 	// If the key is not in the map, value will be zero and ok will be false.
-	Get(key K) (value V, ok bool)
+	Load(key K) (value V, ok bool)
+
+	// Get returns the value to the key.
+	//
+	// It's the same as Load just without ok return.
+	Get(key K) V
 
 	// Range iterates through the map.
 	//
@@ -63,13 +68,18 @@ func (m *immutableMap[K, V]) Len() int {
 	return len(m.m)
 }
 
-func (m *immutableMap[K, V]) Get(key K) (value V, ok bool) {
+func (m *immutableMap[K, V]) Load(key K) (value V, ok bool) {
 	if m == nil {
 		return
 	}
 
 	value, ok = m.m[key]
 	return
+}
+
+func (m *immutableMap[K, V]) Get(key K) V {
+	v, _ := m.Load(key)
+	return v
 }
 
 func (m *immutableMap[K, V]) Range(f MapRangeFunc[K, V]) (err error) {

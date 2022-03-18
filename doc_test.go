@@ -8,7 +8,8 @@ import (
 
 func ExampleList() {
 	list := immutable.ListLiteral("a", "b", "c")
-	fmt.Printf("Len: %d\n", list.Len())
+	fmt.Println("Len:", list.Len())
+	fmt.Println("list.Get(1):", list.Get(1))
 	fmt.Println("Break iteration:")
 	list.Range(func(i int, x string) error {
 		if i >= 1 {
@@ -27,6 +28,7 @@ func ExampleList() {
 	// Output:
 	//
 	// Len: 3
+	// list.Get(1): b
 	// Break iteration:
 	// 0: a
 	// Full iteration:
@@ -47,7 +49,9 @@ func ExampleMap() {
 		2: "b",
 		3: "c",
 	})
-	fmt.Printf("Len: %d\n", m.Len())
+	fmt.Println("Len:", m.Len())
+	fmt.Println("m.Get(1):", m.Get(1))
+	fmt.Println("range:")
 	m.Range(func(k int, v string) error {
 		fmt.Printf("%v: %v\n", k, v)
 		return nil
@@ -56,6 +60,8 @@ func ExampleMap() {
 	//
 	// %v: map[1:a]
 	// Len: 3
+	// m.Get(1): a
+	// range:
 	// 1: a
 	// 2: b
 	// 3: c
@@ -65,7 +71,10 @@ func ExampleSet() {
 	s := immutable.SetLiteral("a")
 	fmt.Printf("%%v: %v\n", s)
 	s = immutable.SetLiteral("a", "b", "c")
-	fmt.Printf("Len: %d\n", s.Len())
+	fmt.Println("Len:", s.Len())
+	fmt.Println(`s.Contains("a"):`, s.Contains("a"))
+	fmt.Println(`s.Contains("d"):`, s.Contains("d"))
+	fmt.Println("range:")
 	s.Range(func(x string) error {
 		fmt.Printf("%v\n", x)
 		return nil
@@ -74,21 +83,10 @@ func ExampleSet() {
 	//
 	// %v: [a]
 	// Len: 3
+	// s.Contains("a"): true
+	// s.Contains("d"): false
+	// range:
 	// a
 	// b
 	// c
-}
-
-func ExampleDropOK() {
-	m := immutable.MapLiteral(map[int]string{
-		1: "a",
-	})
-	fmt.Printf("whole map: %v\n", m)
-	fmt.Printf("1: %q\n", immutable.DropOK(m.Get(1))) // "a"
-	fmt.Printf("2: %q\n", immutable.DropOK(m.Get(2))) // "" as this is not in the map
-	// Output:
-	//
-	// whole map: map[1:a]
-	// 1: "a"
-	// 2: ""
 }
