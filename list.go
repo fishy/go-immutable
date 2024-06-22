@@ -27,6 +27,9 @@ type List[T any] interface {
 	// It will return the error returned by f.
 	Range(f ListRangeFunc[T]) error
 
+	// All returns iter.Seq2[index, value].
+	All() func(yield func(int, T) bool)
+
 	// Reslice returns the sublist from start to end-1 index.
 	//
 	// Use out of range indices will cause panic.
@@ -83,6 +86,20 @@ func (l *list[T]) Range(f ListRangeFunc[T]) error {
 		}
 	}
 	return nil
+}
+
+func (l *list[T]) All() func(yield func(int, T) bool) {
+	return func(yield func(int, T) bool) {
+		if l == nil {
+			return
+		}
+
+		for i, v := range l.list {
+			if !yield(i, v) {
+				return
+			}
+		}
+	}
 }
 
 func (l *list[T]) Reslice(start, end int) List[T] {

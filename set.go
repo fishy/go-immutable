@@ -26,6 +26,9 @@ type Set[T comparable] interface {
 	//
 	// It will return the error returned by f.
 	Range(f SetRangeFunc[T]) error
+
+	// All returns iter.Seq[value].
+	All() func(yield func(T) bool)
 }
 
 // SetBuilder defines the interface of an immutable set builder.
@@ -79,6 +82,19 @@ func (s *set[T]) Range(f SetRangeFunc[T]) error {
 	})
 }
 
+func (s *set[T]) All() func(yield func(T) bool) {
+	if s == nil {
+		return func(yield func(T) bool) {}
+	}
+
+	m := s.m.All()
+	return func(yield func(T) bool) {
+		m(func(k T, _ struct{}) bool {
+			return yield(k)
+		})
+	}
+}
+
 func (s *set[T]) String() string {
 	var builder strings.Builder
 	first := true
@@ -116,6 +132,15 @@ func (s *setBuilder[T]) Range(f SetRangeFunc[T]) error {
 	return s.m.Range(func(k T, _ struct{}) error {
 		return f(k)
 	})
+}
+
+func (s *setBuilder[T]) All() func(yield func(T) bool) {
+	m := s.m.All()
+	return func(yield func(T) bool) {
+		m(func(k T, _ struct{}) bool {
+			return yield(k)
+		})
+	}
 }
 
 func (s *setBuilder[T]) Add(items ...T) SetBuilder[T] {

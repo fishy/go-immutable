@@ -29,6 +29,9 @@ type Map[K comparable, V any] interface {
 	//
 	// It will return the error returned by f.
 	Range(f MapRangeFunc[K, V]) error
+
+	// All returns iter.Seq2[key, value].
+	All() func(yield func(k K, v V) bool)
 }
 
 // MapBuilder defines the interface of an immutable map builder.
@@ -94,6 +97,20 @@ func (m *immutableMap[K, V]) Range(f MapRangeFunc[K, V]) (err error) {
 		}
 	}
 	return
+}
+
+func (m *immutableMap[K, V]) All() func(yield func(K, V) bool) {
+	return func(yield func(K, V) bool) {
+		if m == nil {
+			return
+		}
+
+		for k, v := range m.m {
+			if !yield(k, v) {
+				return
+			}
+		}
+	}
 }
 
 func (m *immutableMap[K, V]) String() string {
