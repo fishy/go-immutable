@@ -12,56 +12,50 @@ This library comes with benchmark test to compare against builtin types
 Here is an example of the benchmark result (with baseline is builtin):
 
 ```
-$ go1.23rc1 test -bench .
+$ go test -bench .
 goos: linux
 goarch: amd64
 pkg: go.yhsif.com/immutable
 cpu: 12th Gen Intel(R) Core(TM) i5-1235U
-BenchmarkListRangeOverFunc/10/baseline-12               845015775                1.426 ns/op           0 B/op          0 allocs/op
-BenchmarkListRangeOverFunc/10/immutable-12              16573042                85.16 ns/op           48 B/op          3 allocs/op
-BenchmarkListRangeOverFunc/1024/baseline-12              8870559               132.8 ns/op             0 B/op          0 allocs/op
-BenchmarkListRangeOverFunc/1024/immutable-12              927172              1273 ns/op              48 B/op          3 allocs/op
-BenchmarkListRangeOverFunc/131072/baseline-12              78766             15299 ns/op               0 B/op          0 allocs/op
-BenchmarkListRangeOverFunc/131072/immutable-12              7062            170198 ns/op              48 B/op          3 allocs/op
-BenchmarkListBuilder/literal-10/baseline-12             1000000000               0.1236 ns/op          0 B/op          0 allocs/op
-BenchmarkListBuilder/literal-10/immutable-12             5638436               204.2 ns/op           288 B/op          5 allocs/op
-BenchmarkListBuilder/10/baseline-12                     23636259                47.69 ns/op           80 B/op          1 allocs/op
-BenchmarkListBuilder/10/immutable-12                     5019793               217.0 ns/op           288 B/op          5 allocs/op
-BenchmarkListBuilder/1024/baseline-12                     610101              1972 ns/op            8192 B/op          1 allocs/op
-BenchmarkListBuilder/1024/immutable-12                    223734              5064 ns/op           24624 B/op          5 allocs/op
-BenchmarkListBuilder/131072/baseline-12                     5720            285895 ns/op         1048579 B/op          1 allocs/op
-BenchmarkListBuilder/131072/immutable-12                    1530           1127645 ns/op         3145786 B/op          5 allocs/op
-BenchmarkListRange/10/baseline-12                       816052042                1.428 ns/op           0 B/op          0 allocs/op
-BenchmarkListRange/10/immutable-12                      79910403                14.31 ns/op            0 B/op          0 allocs/op
-BenchmarkListRange/1024/baseline-12                      8086268               140.5 ns/op             0 B/op          0 allocs/op
-BenchmarkListRange/1024/immutable-12                      992265              1232 ns/op               0 B/op          0 allocs/op
-BenchmarkListRange/131072/baseline-12                      74998             15303 ns/op               0 B/op          0 allocs/op
-BenchmarkListRange/131072/immutable-12                      7922            157158 ns/op               0 B/op          0 allocs/op
-BenchmarkMapRangeOverFunc/10/baseline-12                14847165                75.10 ns/op            0 B/op          0 allocs/op
-BenchmarkMapRangeOverFunc/10/immutable-12                7036680               175.1 ns/op            48 B/op          3 allocs/op
-BenchmarkMapRangeOverFunc/1024/baseline-12                154640              7538 ns/op               0 B/op          0 allocs/op
-BenchmarkMapRangeOverFunc/1024/immutable-12               138348              9006 ns/op              48 B/op          3 allocs/op
-BenchmarkMapRangeOverFunc/131072/baseline-12                1153            995477 ns/op               0 B/op          0 allocs/op
-BenchmarkMapRangeOverFunc/131072/immutable-12               1082           1144126 ns/op              48 B/op          3 allocs/op
-BenchmarkMapBuilder/literal-5/baseline-12               25528448                43.71 ns/op            0 B/op          0 allocs/op
-BenchmarkMapBuilder/literal-5/immutable-12               1249892               882.7 ns/op           688 B/op         12 allocs/op
-BenchmarkMapBuilder/10/baseline-12                       2937368               369.7 ns/op           292 B/op          1 allocs/op
-BenchmarkMapBuilder/10/immutable-literal-12               449425              2263 ns/op            1562 B/op         15 allocs/op
-BenchmarkMapBuilder/10/immutable-builder-12               883972              1324 ns/op            1031 B/op         10 allocs/op
-BenchmarkMapBuilder/1024/baseline-12                       13153             87346 ns/op           86562 B/op         64 allocs/op
-BenchmarkMapBuilder/1024/immutable-literal-12               3673            301829 ns/op          260291 B/op        201 allocs/op
-BenchmarkMapBuilder/1024/immutable-builder-12               5778            209962 ns/op          173520 B/op        134 allocs/op
-BenchmarkMapBuilder/131072/baseline-12                       116          11546224 ns/op        10926761 B/op       4773 allocs/op
-BenchmarkMapBuilder/131072/immutable-literal-12               32          39142880 ns/op        32773630 B/op      14279 allocs/op
-BenchmarkMapBuilder/131072/immutable-builder-12               52          21827526 ns/op        21850592 B/op       9530 allocs/op
-BenchmarkMapRange/10/baseline-12                        16441945                74.17 ns/op            0 B/op          0 allocs/op
-BenchmarkMapRange/10/immutable-12                       13685006                92.67 ns/op            0 B/op          0 allocs/op
-BenchmarkMapRange/1024/baseline-12                        144733              7872 ns/op               0 B/op          0 allocs/op
-BenchmarkMapRange/1024/immutable-12                       139111              9237 ns/op               0 B/op          0 allocs/op
-BenchmarkMapRange/131072/baseline-12                        1167           1008497 ns/op               0 B/op          0 allocs/op
-BenchmarkMapRange/131072/immutable-12                       1105           1183653 ns/op               0 B/op          0 allocs/op
+BenchmarkListBuilder/literal-10/baseline-12             1000000000               0.1226 ns/op          0 B/op          0 allocs/op
+BenchmarkListBuilder/literal-10/immutable-12             8853948               138.0 ns/op           288 B/op          5 allocs/op
+BenchmarkListBuilder/10/baseline-12                     35211993                30.00 ns/op           80 B/op          1 allocs/op
+BenchmarkListBuilder/10/immutable-12                     7969965               141.7 ns/op           288 B/op          5 allocs/op
+BenchmarkListBuilder/1024/baseline-12                     633338              1818 ns/op            8192 B/op          1 allocs/op
+BenchmarkListBuilder/1024/immutable-12                    234624              5069 ns/op           24624 B/op          5 allocs/op
+BenchmarkListBuilder/131072/baseline-12                     8010            145301 ns/op         1048578 B/op          1 allocs/op
+BenchmarkListBuilder/131072/immutable-12                    1563            846922 ns/op         3145783 B/op          5 allocs/op
+BenchmarkListRange/10/baseline-12                       861452865                1.387 ns/op           0 B/op          0 allocs/op
+BenchmarkListRange/10/immutable-12                      83046913                14.07 ns/op            0 B/op          0 allocs/op
+BenchmarkListRange/10/immutable-all-12                  14067778                77.32 ns/op           48 B/op          3 allocs/op
+BenchmarkListRange/1024/baseline-12                      8330391               132.3 ns/op             0 B/op          0 allocs/op
+BenchmarkListRange/1024/immutable-12                      969414              1187 ns/op               0 B/op          0 allocs/op
+BenchmarkListRange/1024/immutable-all-12                  877918              1373 ns/op              48 B/op          3 allocs/op
+BenchmarkListRange/131072/baseline-12                      79238             15261 ns/op               0 B/op          0 allocs/op
+BenchmarkListRange/131072/immutable-12                      7893            154461 ns/op               0 B/op          0 allocs/op
+BenchmarkListRange/131072/immutable-all-12                  6350            176498 ns/op              48 B/op          3 allocs/op
+BenchmarkMapBuilder/literal-5/baseline-12               29004186                43.80 ns/op            0 B/op          0 allocs/op
+BenchmarkMapBuilder/literal-5/immutable-12               1931334               629.7 ns/op           688 B/op         12 allocs/op
+BenchmarkMapBuilder/10/baseline-12                       4204045               282.5 ns/op           292 B/op          1 allocs/op
+BenchmarkMapBuilder/10/immutable-literal-12               720141              1551 ns/op            1562 B/op         15 allocs/op
+BenchmarkMapBuilder/10/immutable-builder-12              1233813               980.9 ns/op          1031 B/op         10 allocs/op
+BenchmarkMapBuilder/1024/baseline-12                       19167             60340 ns/op           86568 B/op         64 allocs/op
+BenchmarkMapBuilder/1024/immutable-literal-12               5065            220412 ns/op          260301 B/op        201 allocs/op
+BenchmarkMapBuilder/1024/immutable-builder-12               7386            144569 ns/op          173537 B/op        134 allocs/op
+BenchmarkMapBuilder/131072/baseline-12                       124          10252703 ns/op        10925729 B/op       4766 allocs/op
+BenchmarkMapBuilder/131072/immutable-literal-12               32          36882045 ns/op        32773405 B/op      14277 allocs/op
+BenchmarkMapBuilder/131072/immutable-builder-12               57          20891777 ns/op        21850429 B/op       9529 allocs/op
+BenchmarkMapRange/10/baseline-12                        14706384                78.00 ns/op            0 B/op          0 allocs/op
+BenchmarkMapRange/10/immutable-12                       13813046                89.78 ns/op            0 B/op          0 allocs/op
+BenchmarkMapRange/10/immutable-all-12                    7471460               167.3 ns/op            48 B/op          3 allocs/op
+BenchmarkMapRange/1024/baseline-12                        122810              8322 ns/op               0 B/op          0 allocs/op
+BenchmarkMapRange/1024/immutable-12                       134680              8906 ns/op               0 B/op          0 allocs/op
+BenchmarkMapRange/1024/immutable-all-12                   126817              9122 ns/op              48 B/op          3 allocs/op
+BenchmarkMapRange/131072/baseline-12                        1198           1060454 ns/op               0 B/op          0 allocs/op
+BenchmarkMapRange/131072/immutable-12                       1054           1139414 ns/op               0 B/op          0 allocs/op
+BenchmarkMapRange/131072/immutable-all-12                   1010           1230834 ns/op              48 B/op          3 allocs/op
 PASS
-ok      go.yhsif.com/immutable  62.894s
+ok      go.yhsif.com/immutable  53.351s
 ```
 
 ## License
