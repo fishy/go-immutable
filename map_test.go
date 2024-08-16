@@ -87,7 +87,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 	b.Run("literal-5", func(b *testing.B) {
 		b.Run("baseline", func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				_ = map[int]int{
 					0: 0,
 					1: 1,
@@ -99,7 +99,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 		})
 		b.Run("immutable", func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				immutable.MapLiteral(map[int]int{
 					0: 0,
 					1: 1,
@@ -114,29 +114,29 @@ func BenchmarkMapBuilder(b *testing.B) {
 		b.Run(fmt.Sprintf("%d", size), func(b *testing.B) {
 			b.Run("baseline", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					orig := make(map[int]int)
-					for j := 0; j < size; j++ {
-						orig[j] = j
+					for i := 0; i < size; i++ {
+						orig[i] = i
 					}
 				}
 			})
 			b.Run("immutable-literal", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					orig := make(map[int]int)
-					for j := 0; j < size; j++ {
-						orig[j] = j
+					for i := 0; i < size; i++ {
+						orig[i] = i
 					}
 					immutable.MapLiteral(orig)
 				}
 			})
 			b.Run("immutable-builder", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					builder := immutable.NewMapBuilder[int, int]()
-					for j := 0; j < size; j++ {
-						builder.Set(j, j)
+					for i := 0; i < size; i++ {
+						builder.Set(i, i)
 					}
 					builder.Build()
 				}
@@ -154,7 +154,7 @@ func BenchmarkMapRange(b *testing.B) {
 			}
 			b.Run("baseline", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					for k, v := range orig {
 						_ = k
 						_ = v
@@ -165,10 +165,21 @@ func BenchmarkMapRange(b *testing.B) {
 				b.ReportAllocs()
 				m := immutable.MapLiteral(orig)
 				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					m.Range(func(k int, v int) error {
 						return nil
 					})
+				}
+			})
+			b.Run("immutable-all", func(b *testing.B) {
+				b.ReportAllocs()
+				m := immutable.MapLiteral(orig)
+				b.ResetTimer()
+				for range b.N {
+					for k, v := range m.All() {
+						_ = k
+						_ = v
+					}
 				}
 			})
 		})

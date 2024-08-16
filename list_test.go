@@ -84,13 +84,13 @@ func BenchmarkListBuilder(b *testing.B) {
 	b.Run("literal-10", func(b *testing.B) {
 		b.Run("baseline", func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				_ = []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 			}
 		})
 		b.Run("immutable", func(b *testing.B) {
 			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
+			for range b.N {
 				immutable.ListLiteral(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
 			}
 		})
@@ -100,19 +100,19 @@ func BenchmarkListBuilder(b *testing.B) {
 		b.Run(fmt.Sprintf("%d", size), func(b *testing.B) {
 			b.Run("baseline", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					list := make([]int, size)
-					for j := 0; j < size; j++ {
-						list[j] = j
+					for i := range size {
+						list[i] = i
 					}
 				}
 			})
 			b.Run("immutable", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					list := make([]int, size)
-					for j := 0; j < size; j++ {
-						list[j] = j
+					for i := 0; i < size; i++ {
+						list[i] = i
 					}
 					immutable.ListLiteral(list...)
 				}
@@ -130,7 +130,7 @@ func BenchmarkListRange(b *testing.B) {
 			}
 			b.Run("baseline", func(b *testing.B) {
 				b.ReportAllocs()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					for i, x := range orig {
 						_ = i
 						_ = x
@@ -141,10 +141,21 @@ func BenchmarkListRange(b *testing.B) {
 				b.ReportAllocs()
 				l := immutable.ListLiteral(orig...)
 				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
+				for range b.N {
 					l.Range(func(i int, x int) error {
 						return nil
 					})
+				}
+			})
+			b.Run("immutable-all", func(b *testing.B) {
+				b.ReportAllocs()
+				l := immutable.ListLiteral(orig...)
+				b.ResetTimer()
+				for range b.N {
+					for i, x := range l.All() {
+						_ = i
+						_ = x
+					}
 				}
 			})
 		})

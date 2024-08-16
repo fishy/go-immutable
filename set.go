@@ -2,6 +2,7 @@ package immutable
 
 import (
 	"fmt"
+	"iter"
 	"strings"
 )
 
@@ -27,8 +28,8 @@ type Set[T comparable] interface {
 	// It will return the error returned by f.
 	Range(f SetRangeFunc[T]) error
 
-	// All returns iter.Seq[value].
-	All() func(yield func(T) bool)
+	// All implements iter.Seq[value].
+	All() iter.Seq[T]
 }
 
 // SetBuilder defines the interface of an immutable set builder.
@@ -82,7 +83,7 @@ func (s *set[T]) Range(f SetRangeFunc[T]) error {
 	})
 }
 
-func (s *set[T]) All() func(yield func(T) bool) {
+func (s *set[T]) All() iter.Seq[T] {
 	if s == nil {
 		return func(yield func(T) bool) {}
 	}
@@ -134,7 +135,7 @@ func (s *setBuilder[T]) Range(f SetRangeFunc[T]) error {
 	})
 }
 
-func (s *setBuilder[T]) All() func(yield func(T) bool) {
+func (s *setBuilder[T]) All() iter.Seq[T] {
 	m := s.m.All()
 	return func(yield func(T) bool) {
 		m(func(k T, _ struct{}) bool {
