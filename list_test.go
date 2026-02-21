@@ -111,7 +111,7 @@ func BenchmarkListBuilder(b *testing.B) {
 				b.ReportAllocs()
 				for range b.N {
 					list := make([]int, size)
-					for i := 0; i < size; i++ {
+					for i := range size {
 						list[i] = i
 					}
 					immutable.ListLiteral(list...)
@@ -125,7 +125,7 @@ func BenchmarkListRange(b *testing.B) {
 	for _, size := range sizes {
 		b.Run(fmt.Sprintf("%d", size), func(b *testing.B) {
 			orig := make([]int, size)
-			for i := 0; i < size; i++ {
+			for i := range size {
 				orig[i] = i
 			}
 			b.Run("baseline", func(b *testing.B) {

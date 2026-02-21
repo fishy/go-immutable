@@ -116,7 +116,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 				b.ReportAllocs()
 				for range b.N {
 					orig := make(map[int]int)
-					for i := 0; i < size; i++ {
+					for i := range size {
 						orig[i] = i
 					}
 				}
@@ -125,7 +125,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 				b.ReportAllocs()
 				for range b.N {
 					orig := make(map[int]int)
-					for i := 0; i < size; i++ {
+					for i := range size {
 						orig[i] = i
 					}
 					immutable.MapLiteral(orig)
@@ -135,7 +135,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 				b.ReportAllocs()
 				for range b.N {
 					builder := immutable.NewMapBuilder[int, int]()
-					for i := 0; i < size; i++ {
+					for i := range size {
 						builder.Set(i, i)
 					}
 					builder.Build()
@@ -149,7 +149,7 @@ func BenchmarkMapRange(b *testing.B) {
 	for _, size := range sizes {
 		b.Run(fmt.Sprintf("%d", size), func(b *testing.B) {
 			orig := make(map[int]int)
-			for i := 0; i < size; i++ {
+			for i := range size {
 				orig[i] = i
 			}
 			b.Run("baseline", func(b *testing.B) {

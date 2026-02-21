@@ -3,6 +3,7 @@ package immutable
 import (
 	"fmt"
 	"iter"
+	"maps"
 )
 
 // MapRangeFunc defines the iteration function for Map type.
@@ -139,9 +140,7 @@ func (mb *mapBuilder[K, V]) Update(incoming map[K]V) MapBuilder[K, V] {
 
 func (mb *mapBuilder[K, V]) Build() Map[K, V] {
 	m := make(map[K]V)
-	for k, v := range mb.immutableMap.m {
-		m[k] = v
-	}
+	maps.Copy(m, mb.immutableMap.m)
 	return &immutableMap[K, V]{
 		m: m,
 	}
