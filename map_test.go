@@ -87,7 +87,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 	b.Run("literal-5", func(b *testing.B) {
 		b.Run("baseline", func(b *testing.B) {
 			b.ReportAllocs()
-			for range b.N {
+			for b.Loop() {
 				_ = map[int]int{
 					0: 0,
 					1: 1,
@@ -99,7 +99,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 		})
 		b.Run("immutable", func(b *testing.B) {
 			b.ReportAllocs()
-			for range b.N {
+			for b.Loop() {
 				immutable.MapLiteral(map[int]int{
 					0: 0,
 					1: 1,
@@ -114,7 +114,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 		b.Run(fmt.Sprintf("%d", size), func(b *testing.B) {
 			b.Run("baseline", func(b *testing.B) {
 				b.ReportAllocs()
-				for range b.N {
+				for b.Loop() {
 					orig := make(map[int]int)
 					for i := range size {
 						orig[i] = i
@@ -123,7 +123,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 			})
 			b.Run("immutable-literal", func(b *testing.B) {
 				b.ReportAllocs()
-				for range b.N {
+				for b.Loop() {
 					orig := make(map[int]int)
 					for i := range size {
 						orig[i] = i
@@ -133,7 +133,7 @@ func BenchmarkMapBuilder(b *testing.B) {
 			})
 			b.Run("immutable-builder", func(b *testing.B) {
 				b.ReportAllocs()
-				for range b.N {
+				for b.Loop() {
 					builder := immutable.NewMapBuilder[int, int]()
 					for i := range size {
 						builder.Set(i, i)
@@ -154,7 +154,7 @@ func BenchmarkMapRange(b *testing.B) {
 			}
 			b.Run("baseline", func(b *testing.B) {
 				b.ReportAllocs()
-				for range b.N {
+				for b.Loop() {
 					for k, v := range orig {
 						_ = k
 						_ = v
@@ -164,8 +164,7 @@ func BenchmarkMapRange(b *testing.B) {
 			b.Run("immutable", func(b *testing.B) {
 				b.ReportAllocs()
 				m := immutable.MapLiteral(orig)
-				b.ResetTimer()
-				for range b.N {
+				for b.Loop() {
 					m.Range(func(k int, v int) error {
 						return nil
 					})
@@ -174,8 +173,7 @@ func BenchmarkMapRange(b *testing.B) {
 			b.Run("immutable-all", func(b *testing.B) {
 				b.ReportAllocs()
 				m := immutable.MapLiteral(orig)
-				b.ResetTimer()
-				for range b.N {
+				for b.Loop() {
 					for k, v := range m.All() {
 						_ = k
 						_ = v
